@@ -4,6 +4,8 @@ import os
 from lxml import etree
 import multiprocessing
 from tqdm import tqdm
+import logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s %(message)s')
 
 
 def dl_pt(pt, path):
@@ -20,7 +22,7 @@ def download_pdf(pt, pdf_url, path, folder_idx):
 
     response = requests.get(pdf_url, stream=True)
     pdf_path = os.path.join(pdf_folder, pt + ".pdf")
-    print(f"Downloading {pt}")
+    logging.info(f"Downloading {pt}")
     with open(pdf_path, 'wb') as file:
         for data in response.iter_content(chunk_size=1024):
             file.write(data)
@@ -107,11 +109,10 @@ if __name__ == "__main__":
     with tqdm(total=len(results), desc="Overall Progress") as pbar:
         for _ in range(len(results)):
             try:
-                queue.get(timeout=2)  
+                queue.get()
                 pbar.update(1)
             except Exception as e:
                 print(f"Error while updating progress: {e}")
-                pbar.update(1)
 
     pool.close()
     pool.join()
