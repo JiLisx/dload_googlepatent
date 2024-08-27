@@ -4,7 +4,7 @@ import os
 from lxml import etree
 import multiprocessing
 from tqdm import tqdm
-import logging
+
 
 def dl_pt(pt, path):
     url = "https://patents.google.com/patent/" + pt
@@ -72,11 +72,16 @@ if __name__ == "__main__":
     if not os.path.exists(path):
         os.makedirs(path)
     initial_folder_idx = 123001
+    
     grant_file = os.path.join(root_path, "grant_pnr_all.txt")
     finish_file = os.path.join(root_path, "finish.txt")
     if not os.path.exists(finish_file):
         open(finish_file, 'w').close()
 
+    manager = multiprocessing.Manager()
+    queue = manager.Queue()
+    pool = multiprocessing.Pool(10)
+    
     # 读取已经完成的专利编号
     with open(finish_file, 'r') as file:
         finish = set(line.strip() for line in file.readlines())
@@ -91,10 +96,6 @@ if __name__ == "__main__":
     # 获取当前的文件夹索引和已下载的文件计数
     folder_idx, pdf_count = get_existing_counts(root_path, initial_folder_idx)
 
-    manager = multiprocessing.Manager()
-    queue = manager.Queue()
-    pool = multiprocessing.Pool(10)
-
     results = []
     max_pdfs_per_folder = 1000
 
@@ -108,11 +109,8 @@ if __name__ == "__main__":
 
     with tqdm(total=len(results), desc="Overall Progress") as pbar:
         for _ in range(len(results)):
-            try:
-                queue.get()
-                pbar.update(1)
-            except Exception as e:
-                print(f"Error while updating progress: {e}")
+            queue.get()
+            pbar.update(1)
 
     pool.close()
     pool.join()
