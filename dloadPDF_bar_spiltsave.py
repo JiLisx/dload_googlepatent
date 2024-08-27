@@ -46,8 +46,8 @@ def d_parse(args):
     extract_and_download_pdf(pt, path, queue, folder_idx)
 
 
-def get_existing_counts(root_path,initial_folder_idx):
-    folder_idx = initial_folder_idx
+def get_existing_counts(root_path):
+    folder_idx = 23001
     pdf_count = 0
     while True:
         folder_path = os.path.join(root_path, f"CN{folder_idx:06d}")
@@ -73,8 +73,6 @@ if __name__ == "__main__":
     
     if not os.path.exists(finish_file):
         open(finish_file, 'w').close()
-    
-    initial_folder_idx = 123001
        
     # 读取已经完成的专利编号
     with open(finish_file, 'r') as file:
