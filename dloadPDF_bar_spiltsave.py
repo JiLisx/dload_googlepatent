@@ -63,13 +63,10 @@ def get_existing_counts(root_path):
 
 
 if __name__ == "__main__":
-    root_path = "/Volumes/WDC5/dload2023"
-    path = os.path.join(root_path, "CN123B")
-    if not os.path.exists(path):
-        os.makedirs(path)
-    
-    grant_file = os.path.join(root_path, "grant_pnr_all.txt")
-    finish_file = os.path.join(root_path, "finish.txt")
+    root_path = "/Volumes/WDC5/dload2023/CN123B"
+
+    grant_file = os.path.join(root_path, "../grant_pnr_all.txt")
+    finish_file = os.path.join(root_path, "../finish.txt")
     
     if not os.path.exists(finish_file):
         open(finish_file, 'w').close()
@@ -98,6 +95,12 @@ if __name__ == "__main__":
         if pdf_count >= max_pdfs_per_folder:
             folder_idx += 1
             pdf_count = 0
+        
+        # 动态生成保存路径
+        path = os.path.join(root_path, f"CN{folder_idx:06d}")
+        if not os.path.exists(path):
+            os.makedirs(path)
+        
         result = pool.apply_async(func=d_parse, args=((pt, path, queue, folder_idx),))
         results.append(result)
         pdf_count += 1
