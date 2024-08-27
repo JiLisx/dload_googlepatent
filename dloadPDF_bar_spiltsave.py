@@ -46,8 +46,8 @@ def d_parse(args):
     extract_and_download_pdf(pt, path, queue, folder_idx)
 
 
-def get_existing_counts(root_path):
-    folder_idx = 122001
+def get_existing_counts(root_path,initial_folder_idx):
+    folder_idx = initial_folder_idx
     pdf_count = 0
     while True:
         folder_path = os.path.join(root_path, f"CN{folder_idx:06d}")
@@ -67,6 +67,8 @@ if __name__ == "__main__":
     path = os.path.join(root_path, "CN123B")
     if not os.path.exists(path):
         os.makedirs(path)
+    initial_folder_idx = 123001
+    grant_file = os.path.join(root_path, "grant_pnr_all.txt")
     finish_file = os.path.join(root_path, "finish.txt")
     if not os.path.exists(finish_file):
         open(finish_file, 'w').close()
@@ -76,14 +78,14 @@ if __name__ == "__main__":
         finish = set(line.strip() for line in file.readlines())
 
     # 读取所有需要下载的专利编号
-    with open(os.path.join(root_path, "grant_2023.txt"), 'r') as f:
+    with open(grant_file, 'r') as f:
         pts = [line.strip() for line in f.readlines()]
 
     # 生成未下载的专利列表
     pts_to_download = [pt for pt in pts if pt not in finish]
 
     # 获取当前的文件夹索引和已下载的文件计数
-    folder_idx, pdf_count = get_existing_counts(root_path)
+    folder_idx, pdf_count = get_existing_counts(root_path, initial_folder_idx)
 
     manager = multiprocessing.Manager()
     queue = manager.Queue()
