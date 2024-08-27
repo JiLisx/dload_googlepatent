@@ -106,8 +106,12 @@ if __name__ == "__main__":
 
     with tqdm(total=len(results), desc="Overall Progress") as pbar:
         for _ in range(len(results)):
-            queue.get()
-            pbar.update(1)
+            try:
+                queue.get(timeout=2)  
+                pbar.update(1)
+            except Exception as e:
+                print(f"Error while updating progress: {e}")
+                pbar.update(1)
 
     pool.close()
     pool.join()
