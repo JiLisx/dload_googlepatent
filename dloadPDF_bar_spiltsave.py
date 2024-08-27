@@ -27,18 +27,20 @@ def download_pdf(pt, pdf_url, path, folder_idx):
 
 
 def extract_and_download_pdf(pt, path, queue, folder_idx):
-    pt_text = dl_pt(pt, path)
-    tree = etree.HTML(pt_text)
-    if tree is not None:
-        pdf_links = tree.xpath(f'//a[contains(@href, "{pt}") and contains(@href, ".pdf")]/@href')
-        if pdf_links:
-            pdf_url = pdf_links[0]
-            download_pdf(pt, pdf_url, path, folder_idx)
-        else:
-            print(f"No PDF link found for patent {pt}")
-    with open(os.path.join(path, "../finish.txt"), 'a') as f:
-        f.write(pt + "\n")
-    queue.put(1)
+    try:
+        pt_text = dl_pt(pt, path)
+        tree = etree.HTML(pt_text)
+        if tree is not None:
+            pdf_links = tree.xpath(f'//a[contains(@href, "{pt}") and contains(@href, ".pdf")]/@href')
+            if pdf_links:
+                pdf_url = pdf_links[0]
+                download_pdf(pt, pdf_url, path, folder_idx)
+            else:
+                print(f"No PDF link found for patent {pt}")
+        with open(os.path.join(path, "../finish.txt"), 'a') as f:
+            f.write(pt + "\n")
+    finally:
+        queue.put(1)
 
 
 def d_parse(args):
