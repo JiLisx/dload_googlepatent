@@ -42,7 +42,7 @@ def extract_and_download_pdf(pt, path, queue, folder_idx):
         with open(os.path.join(path, "../finish.txt"), 'a') as f:
             f.write(pt + "\n")
     except Exception as e:
-    print(f"Error processing {pt}: {e}")
+        print(f"Error processing {pt}: {e}")
     finally:
         queue.put(1)
 
