@@ -36,7 +36,7 @@ def extract_and_download_pdf(pt, path, queue, folder_idx):
             download_pdf(pt, pdf_url, path, folder_idx)
         else:
             print(f"No PDF link found for patent {pt}")
-    with open(os.path.join(path, "../finish.txt"), 'a') as f:
+    with open(os.path.join(path, "finish.txt"), 'a') as f:
         f.write(pt + "\n")
     queue.put(1)
 
@@ -65,8 +65,8 @@ def get_existing_counts(root_path):
 if __name__ == "__main__":
     root_path = "/Volumes/WDC5/dload2023/"
 
-    grant_file = os.path.join(root_path, "../grant_pnr_all.txt")
-    finish_file = os.path.join(root_path, "../finish.txt")
+    grant_file = os.path.join(root_path, "grant_pnr_all.txt")
+    finish_file = os.path.join(root_path, "finish.txt")
     
     if not os.path.exists(finish_file):
         open(finish_file, 'w').close()
