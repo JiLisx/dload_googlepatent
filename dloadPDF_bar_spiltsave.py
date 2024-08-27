@@ -45,9 +45,8 @@ def extract_and_download_pdf(pt, path, queue, folder_idx, finish_file):
 
 
 def d_parse(args):
-    pt, path, queue, folder_idx = args, finish_file = args
+    pt, path, queue, folder_idx, finish_file = args
     extract_and_download_pdf(pt, path, queue, folder_idx, finish_file)
-
 
 def get_existing_counts(root_path,initial_folder_idx):
     folder_idx = initial_folder_idx
@@ -100,7 +99,7 @@ if __name__ == "__main__":
         if pdf_count >= max_pdfs_per_folder:
             folder_idx += 1
             pdf_count = 0
-        result = pool.apply_async(func=d_parse, args=((pt, root_path, queue, folder_idx),))
+        result = pool.apply_async(func=d_parse, args=((pt, root_path, queue, folder_idx, finish_file),))
         results.append(result)
         pdf_count += 1
 
