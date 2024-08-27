@@ -47,7 +47,7 @@ def d_parse(args):
 
 
 def get_existing_counts(root_path):
-    folder_idx = 23001
+    folder_idx = 123001
     pdf_count = 0
     while True:
         folder_path = os.path.join(root_path, f"CN{folder_idx:06d}")
@@ -63,7 +63,7 @@ def get_existing_counts(root_path):
 
 
 if __name__ == "__main__":
-    root_path = "/Volumes/WDC5/dload2023/CN123B"
+    root_path = "/Volumes/WDC5/dload2023/"
 
     grant_file = os.path.join(root_path, "../grant_pnr_all.txt")
     finish_file = os.path.join(root_path, "../finish.txt")
