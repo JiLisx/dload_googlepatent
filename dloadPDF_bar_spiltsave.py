@@ -25,7 +25,7 @@ def download_pdf(pt, pdf_url, path, folder_idx):
             file.write(data)
 
 
-def extract_and_download_pdf(pt, path, queue, folder_idx):
+def extract_and_download_pdf(pt, path, queue, folder_idx, finish_file):
     try:
         pt_text = dl_pt(pt, path)
         tree = etree.HTML(pt_text)
@@ -45,8 +45,8 @@ def extract_and_download_pdf(pt, path, queue, folder_idx):
 
 
 def d_parse(args):
-    pt, path, queue, folder_idx = args
-    extract_and_download_pdf(pt, path, queue, folder_idx)
+    pt, path, queue, folder_idx = args, finish_file = args
+    extract_and_download_pdf(pt, path, queue, folder_idx, finish_file)
 
 
 def get_existing_counts(root_path,initial_folder_idx):
