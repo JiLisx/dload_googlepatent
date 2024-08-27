@@ -100,7 +100,7 @@ if __name__ == "__main__":
         if pdf_count >= max_pdfs_per_folder:
             folder_idx += 1
             pdf_count = 0
-        result = pool.apply_async(func=d_parse, args=((pt, path, queue, folder_idx),))
+        result = pool.apply_async(func=d_parse, args=((pt, root_path, queue, folder_idx),))
         results.append(result)
         pdf_count += 1
 
