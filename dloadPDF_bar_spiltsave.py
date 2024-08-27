@@ -5,7 +5,6 @@ from lxml import etree
 import multiprocessing
 from tqdm import tqdm
 
-
 def dl_pt(pt, path):
     url = "https://patents.google.com/patent/" + pt
     r = requests.get(url)
@@ -27,18 +26,22 @@ def download_pdf(pt, pdf_url, path, folder_idx):
 
 
 def extract_and_download_pdf(pt, path, queue, folder_idx):
-    pt_text = dl_pt(pt, path)
-    tree = etree.HTML(pt_text)
-    if tree is not None:
-        pdf_links = tree.xpath(f'//a[contains(@href, "{pt}") and contains(@href, ".pdf")]/@href')
-        if pdf_links:
-            pdf_url = pdf_links[0]
-            download_pdf(pt, pdf_url, path, folder_idx)
-        else:
-            print(f"No PDF link found for patent {pt}")
-    with open(os.path.join(path, "finish.txt"), 'a') as f:
-        f.write(pt + "\n")
-    queue.put(1)
+    try:
+        pt_text = dl_pt(pt, path)
+        tree = etree.HTML(pt_text)
+        if tree is not None:
+            pdf_links = tree.xpath(f'//a[contains(@href, "{pt}") and contains(@href, ".pdf")]/@href')
+            if pdf_links:
+                pdf_url = pdf_links[0]
+                download_pdf(pt, pdf_url, path, folder_idx)
+            else:
+                print(f"No PDF link found for patent {pt}")
+        with open(os.path.join(path, "../finish.txt"), 'a') as f:
+            f.write(pt + "\n")
+    except Exception as e:
+        print(f"Error processing {pt}: {e}")
+    finally:
+        queue.put(1)
 
 
 def d_parse(args):
@@ -46,8 +49,8 @@ def d_parse(args):
     extract_and_download_pdf(pt, path, queue, folder_idx)
 
 
-def get_existing_counts(root_path):
-    folder_idx = 123001
+def get_existing_counts(root_path,initial_folder_idx):
+    folder_idx = initial_folder_idx
     pdf_count = 0
     while True:
         folder_path = os.path.join(root_path, f"CN{folder_idx:06d}")
@@ -63,14 +66,16 @@ def get_existing_counts(root_path):
 
 
 if __name__ == "__main__":
-    root_path = "/Volumes/WDC5/dload2023/"
-
+    root_path = "/Volumes/WDC5/dload2023"
+    path = os.path.join(root_path, "CN123B")
+    if not os.path.exists(path):
+        os.makedirs(path)
+    initial_folder_idx = 123001
     grant_file = os.path.join(root_path, "grant_pnr_all.txt")
     finish_file = os.path.join(root_path, "finish.txt")
-    
     if not os.path.exists(finish_file):
         open(finish_file, 'w').close()
-       
+
     # 读取已经完成的专利编号
     with open(finish_file, 'r') as file:
         finish = set(line.strip() for line in file.readlines())
@@ -83,11 +88,12 @@ if __name__ == "__main__":
     pts_to_download = [pt for pt in pts if pt not in finish]
 
     # 获取当前的文件夹索引和已下载的文件计数
-    folder_idx, pdf_count = get_existing_counts(root_path)
+    folder_idx, pdf_count = get_existing_counts(root_path, initial_folder_idx)
 
     manager = multiprocessing.Manager()
     queue = manager.Queue()
     pool = multiprocessing.Pool(10)
+
     results = []
     max_pdfs_per_folder = 1000
 
@@ -95,20 +101,17 @@ if __name__ == "__main__":
         if pdf_count >= max_pdfs_per_folder:
             folder_idx += 1
             pdf_count = 0
-        
-        # 动态生成保存路径
-        path = os.path.join(root_path, f"CN{folder_idx:06d}")
-        if not os.path.exists(path):
-            os.makedirs(path)
-        
         result = pool.apply_async(func=d_parse, args=((pt, path, queue, folder_idx),))
         results.append(result)
         pdf_count += 1
 
     with tqdm(total=len(results), desc="Overall Progress") as pbar:
         for _ in range(len(results)):
-            queue.get()
-            pbar.update(1)
+            try:
+                queue.get()
+                pbar.update(1)
+            except Exception as e:
+                print(f"Error while updating progress: {e}")
 
     pool.close()
     pool.join()
