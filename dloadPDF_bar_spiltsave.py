@@ -5,8 +5,6 @@ from lxml import etree
 import multiprocessing
 from tqdm import tqdm
 import logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s %(message)s')
-
 
 def dl_pt(pt, path):
     url = "https://patents.google.com/patent/" + pt
@@ -22,7 +20,7 @@ def download_pdf(pt, pdf_url, path, folder_idx):
 
     response = requests.get(pdf_url, stream=True)
     pdf_path = os.path.join(pdf_folder, pt + ".pdf")
-    # logging.info(f"Downloading {pt}")
+    print(f"Downloading {pt}")
     with open(pdf_path, 'wb') as file:
         for data in response.iter_content(chunk_size=1024):
             file.write(data)
