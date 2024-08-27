@@ -22,7 +22,7 @@ def download_pdf(pt, pdf_url, path, folder_idx):
 
     response = requests.get(pdf_url, stream=True)
     pdf_path = os.path.join(pdf_folder, pt + ".pdf")
-    logging.info(f"Downloading {pt}")
+    # logging.info(f"Downloading {pt}")
     with open(pdf_path, 'wb') as file:
         for data in response.iter_content(chunk_size=1024):
             file.write(data)
@@ -41,6 +41,8 @@ def extract_and_download_pdf(pt, path, queue, folder_idx):
                 print(f"No PDF link found for patent {pt}")
         with open(os.path.join(path, "../finish.txt"), 'a') as f:
             f.write(pt + "\n")
+    except Exception as e:
+    print(f"Error processing {pt}: {e}")
     finally:
         queue.put(1)
 
