@@ -4,6 +4,7 @@ import os
 from lxml import etree
 import multiprocessing
 from tqdm import tqdm
+import time
 
 def dl_pt(pt, path):
     url = "https://patents.google.com/patent/" + pt
