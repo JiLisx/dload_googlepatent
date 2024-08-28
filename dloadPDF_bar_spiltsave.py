@@ -26,10 +26,13 @@ def download_pdf(pt, pdf_url, path, folder_idx):
     with open(pdf_path, 'wb') as file:
         for data in response.iter_content(chunk_size=1024):
             file.write(data)
+    
     end_time = time.time()
     d_time = end_time - start_time
     
-    print(f"Downloaded {pt} in {d_time:.2f} seconds, saved to {pdf_path}")
+    file_size = os.path.getsize(pdf_path) / (1024 * 1024)  # 获取文件大小，单位为 MB
+
+    print(f"Downloaded {pt} in {d_time:.2f} seconds, size: {file_size:.2f} MB")
 
 def extract_and_download_pdf(pt, path, queue, folder_idx, finish_file):
     try:
@@ -96,7 +99,7 @@ if __name__ == "__main__":
 
     manager = multiprocessing.Manager()
     queue = manager.Queue()
-    pool = multiprocessing.Pool(1)
+    pool = multiprocessing.Pool(20)
 
     results = []
     max_pdfs_per_folder = 1000
