@@ -16,14 +16,19 @@ def download_pdf(pt, pdf_url, path, folder_idx):
     pdf_folder = os.path.join(path, f"CN{folder_idx:06d}")
     if not os.path.exists(pdf_folder):
         os.makedirs(pdf_folder)
-
+        
+    start_time = time.time()
+    
     response = requests.get(pdf_url, stream=True)
     pdf_path = os.path.join(pdf_folder, pt + ".pdf")
     #  print(f"Downloading {pt}")
     with open(pdf_path, 'wb') as file:
         for data in response.iter_content(chunk_size=1024):
             file.write(data)
-
+    end_time = time.time()
+    d_time = end_time - start_time
+    
+    print(f"Downloaded {pt} in {d_time:.2f} seconds, saved to {pdf_path}")
 
 def extract_and_download_pdf(pt, path, queue, folder_idx, finish_file):
     try:
@@ -90,7 +95,7 @@ if __name__ == "__main__":
 
     manager = multiprocessing.Manager()
     queue = manager.Queue()
-    pool = multiprocessing.Pool(10)
+    pool = multiprocessing.Pool(1)
 
     results = []
     max_pdfs_per_folder = 1000
