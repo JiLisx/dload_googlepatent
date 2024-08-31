@@ -21,7 +21,7 @@ def download_pdf(pt, pdf_url, path, folder_idx):
     if not os.path.exists(pdf_folder):
         os.makedirs(pdf_folder)
 
-    start_time = time.time()
+    # start_time = time.time()
 
     response = requests.get(pdf_url, stream=True)
     pdf_path = os.path.join(pdf_folder, pt + ".pdf")
@@ -29,9 +29,9 @@ def download_pdf(pt, pdf_url, path, folder_idx):
         for data in response.iter_content(chunk_size=1024):
             file.write(data)
 
-    end_time = time.time()
-    d_time = end_time - start_time
-    print(f"Downloaded {pt} in {d_time:.2f} seconds, saved to {pdf_path}")
+    # end_time = time.time()
+    # d_time = end_time - start_time
+    # print(f"Downloaded {pt} in {d_time:.2f} seconds, saved to {pdf_path}")
 
 
 def extract_and_download_pdf(pt, path, folder_idx, finish_file):
