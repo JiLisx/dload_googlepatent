@@ -68,8 +68,8 @@ def get_existing_counts(root_path, initial_folder_idx):
 
 
 if __name__ == "__main__":
-    root_path = "/Volumes/WDC5/dload2023/CN2406"
-    initial_folder_idx = 123001
+    root_path = "/Volumes/WDC5/dload2023/CN2406/"
+    initial_folder_idx = 124001
 
     grant_file = os.path.join(root_path, "../missing_pdfs2406.txt")
     finish_file = os.path.join(root_path, "../finish2406.txt")
