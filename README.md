@@ -2,7 +2,7 @@
 
 
 
-# 所有授权专利生成txt
+# 所有授权专利列表
 
 ## 按日期筛选
 
@@ -34,7 +34,7 @@ NR>1 && $gdate_col >= "1800-01-01" && $gdate_col <= "2999-01-01" {print $pnr_col
 
 
 
-# 数据统计
+# 下载pdf数据统计
 
 ## 到2024年6月所有授权的pdf数量
 `wc -l grant_pnr_all2406.txt`
@@ -59,16 +59,34 @@ NR>1 && $gdate_col >= "1800-01-01" && $gdate_col <= "2999-01-01" {print $pnr_col
 
 # 运行check.py输出结果
 
+## 剔除CN123A的结果
 ```
 Total granted patents read: 6949729
 Total patent PDF files found: 7467074
-Scanning PDF files: 7467474it [00:15, 485891.91it/s]
+Scanning PDF files: 7467482it [00:51, 144374.85it/s]
 Total PDF files downloaded: 6943152
-Patents found in the grant file but missing in the download files: 18410 【没有下载成功的】
+Patents found in the grant file but missing in the download files: 18410【没有下载成功的】
 Extra PDF files found in the download directory but not in the grant file: 11833 【下载了但是不在授权列表的】
+Total duplicate PDFs that has been downloaded found: 523906 【重复下载的】
+Duplicate PDFs and their paths written to: /data/home/jdang/SIPO_PDF_B/duplicate_pdfs2406.txt
 Missing pdf has been written to /data/home/jdang/SIPO_PDF_B/missing_pdfs2406.txt
 Extra PDF has been written to /data/home/jdang/SIPO_PDF_B/extra_pdfs2406.txt
+Duplicate PDFs have been written to /data/home/jdang/SIPO_PDF_B/duplicate_pdfs2406.txt
 
+```
+## 剔除CN122和CN123A的结果
+```
+Total granted patents read: 6949729
+Total patent PDF files found: 6945165
+Scanning PDF files: 6945580it [00:49, 139996.62it/s]
+Total PDF files downloaded: 6943152
+Patents found in the grant file but missing in the download files: 18410
+Extra PDF files found in the download directory but not in the grant file: 11833
+Total duplicate PDFs that has been downloaded found: 2003
+Duplicate PDFs and their paths written to: /data/home/jdang/SIPO_PDF_B/duplicate_pdfs2406.txt
+Missing pdf has been written to /data/home/jdang/SIPO_PDF_B/missing_pdfs2406.txt
+Extra PDF has been written to /data/home/jdang/SIPO_PDF_B/extra_pdfs2406.txt
+Duplicate PDFs have been written to /data/home/jdang/SIPO_PDF_B/duplicate_pdfs2406.txt
 ```
 
 ## Extra PDF: 已经下载但不在txt中的pdf文件列表
@@ -112,5 +130,16 @@ Extra PDF has been written to /data/home/jdang/SIPO_PDF_B/extra_pdfs2406.txt
    - 统计年度分布
       - `awk -F, '{print substr($2, 1, 4)}' missing_detail.txt | sort | uniq -c | sort -k2`
 ![image](https://github.com/user-attachments/assets/a7c4cce6-cffe-4cb5-89a1-dc9a504cd91f)
+
+## 重复下载的pdf：523906
+- 又在liji又在jdang：521903【主要在CN122里】
+- 只在liji：1994
+- 只在jdang：9
+
+- CN122里重复的数量：521909
+- grep "CN122" duplicate_pdfs2406.txt | awk -F, '{count=0; for(i=3; i<=NF; i++) if ($i ~ /CN122/) count++; print count}' | paste -sd+ | bc
+
+- CN123B里重复的数量：3998
+- grep "CN123" duplicate_pdfs2406.txt | awk -F, '{count=0; for(i=3; i<=NF; i++) if ($i ~ /CN123B/) count++; print count}' | paste -sd+ | bc
 
 
