@@ -129,6 +129,7 @@ Duplicate PDFs have been written to /data/home/jdang/SIPO_PDF_B/duplicate_pdfs24
       - `grep -Ff missing_pdfs2406.txt grant2406.csv > missing_detail.txt`
    - 统计年度分布
       - `awk -F, '{print substr($2, 1, 4)}' missing_detail.txt | sort | uniq -c | sort -k2`
+      - 
 ![image](https://github.com/user-attachments/assets/a7c4cce6-cffe-4cb5-89a1-dc9a504cd91f)
 
 ## 重复下载的pdf：523906
